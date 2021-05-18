@@ -1,10 +1,15 @@
 #! /bin/bash
 cd /root
 
+apt-get install wireguard
+apt-get install socat
+apt-get install docker.io
 
 echo "检测wireguard安装情况" 
 
 modprobe wireguard
+
+
 
 if lsmod | grep wireguard ; then
     echo "wireguard 已安装"
@@ -312,15 +317,15 @@ rm -rf gost-linux-amd64-2.11.1.gz
 mv gost-linux-amd64-2.11.1 /usr/bin/gost
 chmod +x /usr/bin/gost
 
-nohup gost -L=rtcp://:$ssport_really/127.0.0.1:$ssport &
-nohup gost -L=rudp://:$ssport_really/127.0.0.1:$ssport?ttl=60s &
-nohup gost -L=rtcp://:$v2ray_port_really/127.0.0.1:$v2ray_port &
-nohup gost -L=rudp://:$v2ray_port_really/127.0.0.1:$v2ray_port?ttl=60s &
+nohup socat TCP4-LISTEN:$ssport_really,reuseaddr,fork TCP4:127.0.0.1:$ssport  >> /dev/null 2>&1 &
+nohup socat UDP4-LISTEN:$ssport_really,reuseaddr,fork UDP4:127.0.0.1:$ssport  >> /dev/null 2>&1 &
+nohup socat TCP4-LISTEN:$v2ray_port_really,reuseaddr,fork TCP4:127.0.0.1:$v2ray_port  >> /dev/null 2>&1 &
+nohup socat UDP4-LISTEN:$v2ray_port_really,reuseaddr,fork UDP4:127.0.0.1:$v2ray_port  >> /dev/null 2>&1 &
 
-echo "nohup gost -L=rtcp://:$ssport_really/127.0.0.1:$ssport &" >> /etc/rc.local
-echo "nohup gost -L=rudp://:$ssport_really/127.0.0.1:$ssport?ttl=60s &" >> /etc/rc.local
-echo "nohup gost -L=rtcp://:$v2ray_port_really/127.0.0.1:$v2ray_port &" >> /etc/rc.local
-echo "nohup gost -L=rudp://:$v2ray_port_really/127.0.0.1:$v2ray_port?ttl=60s &" >> /etc/rc.local
+echo "nohup socat TCP4-LISTEN:$ssport_really,reuseaddr,fork TCP4:127.0.0.1:$ssport  >> /dev/null 2>&1 &" >> /etc/rc.local
+echo "nohup socat UDP4-LISTEN:$ssport_really,reuseaddr,fork UDP4:127.0.0.1:$ssport  >> /dev/null 2>&1 &" >> /etc/rc.local
+echo "nohup socat TCP4-LISTEN:$v2ray_port_really,reuseaddr,fork TCP4:127.0.0.1:$v2ray_port  >> /dev/null 2>&1 &" >> /etc/rc.local
+echo "nohup socat UDP4-LISTEN:$v2ray_port_really,reuseaddr,fork UDP4:127.0.0.1:$v2ray_port  >> /dev/null 2>&1 &" >> /etc/rc.local
 
 
 
