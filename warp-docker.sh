@@ -1,9 +1,9 @@
 #! /bin/bash
 cd /root
 
-apt-get install wireguard
-apt-get install socat
-apt-get install docker.io
+apt-get install wireguard -y
+apt-get install socat -y
+apt-get install docker.io -y
 
 echo "检测wireguard安装情况" 
 
