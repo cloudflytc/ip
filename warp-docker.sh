@@ -52,7 +52,21 @@ if ls -l warp.conf; then
     rm -rf warp.conf
 fi
 
-wget -O wgcf https://github.com/ViRb3/wgcf/releases/download/v2.2.2/wgcf_2.2.2_linux_amd64
+get_arch=`arch`
+if [[ $get_arch =~ "x86_64" ]];then
+    os="amd64"
+elif [[ $get_arch =~ "aarch64" ]];then
+    os="armv7"
+elif [[ $get_arch =~ "mips64" ]];then
+    os="mips_softfloat"
+else
+    echo "unknown!!"
+fi
+
+url_first="https://github.com/ViRb3/wgcf/releases/download/v2.2.3/wgcf_2.2.3_linux_"
+url=$url_first$os
+
+wget -O wgcf $url
 chmod +x wgcf
 ./wgcf register
 ./wgcf generate
