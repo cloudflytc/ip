@@ -2,7 +2,6 @@
 cd /root
 
 apt-get install wireguard -y
-apt-get install socat -y
 apt-get install docker.io -y
 
 echo "检测wireguard安装情况" 
@@ -266,22 +265,8 @@ error() {
 
 }
 v2ray_port_config
-
-random=$(shuf -i20001-65535 -n1)
-echo -e "请输入 "$yellow"V2Ray"$none" 回环端口 ["$magenta"1-65535"$none"]"
-read -p "$(echo -e "(默认端口: ${cyan}${random}$none):")" v2ray_port_really
-[ -z "$v2ray_port_really" ] && v2ray_port_really=$random
-
-
 shadowsocks_port_config
-
-random=$(shuf -i20001-65535 -n1)
-echo -e "请输入 "$yellow"Shadowsocks"$none" 回环端口 ["$magenta"1-65535"$none"]，不能和 "$yellow"V2Ray"$none" 端口相同"
-read -p "$(echo -e "(默认端口: ${cyan}${random}$none):") " ssport_really
-[ -z "$ssport_really" ] && ssport_really=$random
-
 shadowsocks_password_config
-
 get_ip
 
 
@@ -325,26 +310,11 @@ docker run -d --restart=always --cap-add=NET_ADMIN \
     cloudfly23/wireguard-proxy-v2ray
 docker ps -a
 
-wget https://github.com/ginuerzh/gost/releases/download/v2.11.1/gost-linux-amd64-2.11.1.gz
-gunzip gost-linux-amd64-2.11.1.gz
-rm -rf gost-linux-amd64-2.11.1.gz
-mv gost-linux-amd64-2.11.1 /usr/bin/gost
-chmod +x /usr/bin/gost
-
-nohup socat TCP4-LISTEN:$ssport_really,reuseaddr,fork TCP4:127.0.0.1:$ssport  >> /dev/null 2>&1 &
-nohup socat UDP4-LISTEN:$ssport_really,reuseaddr,fork UDP4:127.0.0.1:$ssport  >> /dev/null 2>&1 &
-nohup socat TCP4-LISTEN:$v2ray_port_really,reuseaddr,fork TCP4:127.0.0.1:$v2ray_port  >> /dev/null 2>&1 &
-nohup socat UDP4-LISTEN:$v2ray_port_really,reuseaddr,fork UDP4:127.0.0.1:$v2ray_port  >> /dev/null 2>&1 &
-
-echo "nohup socat TCP4-LISTEN:$ssport_really,reuseaddr,fork TCP4:127.0.0.1:$ssport  >> /dev/null 2>&1 &" >> /etc/rc.local
-echo "nohup socat UDP4-LISTEN:$ssport_really,reuseaddr,fork UDP4:127.0.0.1:$ssport  >> /dev/null 2>&1 &" >> /etc/rc.local
-echo "nohup socat TCP4-LISTEN:$v2ray_port_really,reuseaddr,fork TCP4:127.0.0.1:$v2ray_port  >> /dev/null 2>&1 &" >> /etc/rc.local
-echo "nohup socat UDP4-LISTEN:$v2ray_port_really,reuseaddr,fork UDP4:127.0.0.1:$v2ray_port  >> /dev/null 2>&1 &" >> /etc/rc.local
 
 
 
-ss="ss://$(echo -n "${ssciphers}:${sspass}@${ip}:${ssport_really}" | base64 -w 0)#ss_${ip}"
-json="{\"v\": \"2\",\"ps\": \"\",\"add\": \"${ip}\",\"port\": \"$v2ray_port_really\",\"id\": \"$uuid\",\"aid\": \"0\",\"net\": \"ws\",\"type\": \"none\",\"host\": \"\",\"path\": \"\",\"tls\": \"\"}"
+ss="ss://$(echo -n "${ssciphers}:${sspass}@${ip}:${ssport}" | base64 -w 0)#ss_${ip}"
+json="{\"v\": \"2\",\"ps\": \"\",\"add\": \"${ip}\",\"port\": \"$v2ray_port\",\"id\": \"$uuid\",\"aid\": \"0\",\"net\": \"ws\",\"type\": \"none\",\"host\": \"\",\"path\": \"\",\"tls\": \"\"}"
 
 v2ray="vmess://$(echo -n "${json}" | base64 -w 0)"
 echo
