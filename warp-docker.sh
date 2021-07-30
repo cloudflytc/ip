@@ -67,7 +67,7 @@ url=$url_first$os
 
 wget -O wgcf $url
 chmod +x wgcf
-./wgcf register
+echo | ./wgcf register
 ./wgcf generate
 
 if ls -l wgcf-profile.conf;then
