@@ -1,5 +1,7 @@
 #! /bin/bash
 
+sudo apt install openresolv
+
 echo "检测wireguard安装情况" 
 
 modprobe wireguard
