@@ -1,6 +1,30 @@
 #! /bin/bash
 cd /root
 
+sys_bit=$(uname -m)
+
+case $sys_bit in
+i[36]86)
+        ARCH="latest"
+        caddy_arch="386"
+        ;;
+'amd64' | x86_64)
+        ARCH="latest"
+        caddy_arch="amd64"
+        ;;
+*aarch64* | *armv8*)
+        ARCH="arm64"
+        caddy_arch="arm64"
+        ;;
+*)
+        echo -e " 
+        哈哈……这个 ${red}辣鸡脚本${none} 不支持你的系统。 ${yellow}(-_-) ${none}
+
+        备注: 仅支持 Ubuntu 16+ / Debian 8+ / CentOS 7+ 系统
+        " && exit 1
+        ;;
+esac
+
 apt-get install wireguard -y
 apt-get install docker.io -y
 
@@ -307,7 +331,7 @@ docker run -d --restart=always --cap-add=NET_ADMIN \
     --volume /root/warp-docker:/etc/v2ray \
     -p $ssport:$ssport \
     -p $v2ray_port:$v2ray_port \
-    cloudfly23/wireguard-proxy-v2ray
+    cloudfly23/wireguard-proxy-v2ray:$ARCH
 docker ps -a
 
 
