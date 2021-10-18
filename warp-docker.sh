@@ -324,7 +324,7 @@ do
 done
 rm -rf config-mb.json
 
-docker run -d --restart=always --cap-add=NET_ADMIN --net=host \
+docker run -d --restart=always --cap-add=NET_ADMIN \
      --privileged \
     --name wireguard-v2ray-warp \
     --volume /root/warp-docker:/etc/wireguard/:ro \
