@@ -330,7 +330,9 @@ docker run -d --restart=always --cap-add=NET_ADMIN \
     --volume /root/warp-docker:/etc/wireguard/:ro \
     --volume /root/warp-docker:/etc/v2ray \
     -p $ssport:$ssport \
+    -p $ssport:$(ssport)/udp \
     -p $v2ray_port:$v2ray_port \
+    -p $v2ray_port:$(v2ray_port)/udp \
     cloudfly23/wireguard-proxy-v2ray:$ARCH
 docker ps -a
 
